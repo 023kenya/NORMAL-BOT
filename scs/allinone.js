@@ -2,27 +2,28 @@
 
 const axios = require('axios');
 const cheerio = require('cheerio');
-
-const webPageUrl = 'https://www.ibrahimadams.site/files';
+const adams = require(__dirname + "/../config");
 
 async function fetchMoreInOneUrl() {
-    try {
-        const response = await axios.get(webPageUrl);
-        const $ = cheerio.load(response.data);
-        const moreInOneUrl = $(`a:contains("MOREINONE_URL")`).attr('href');
+  try {
+    const response = await axios.get(adams.BWM_XMD);
+    const $ = cheerio.load(response.data);
 
-        if (!moreInOneUrl) throw new Error('MOREINONE_URL not found on the webpage.');
+    const moreInOneUrlElement = $('a:contains("MOREINONE_URL")');
+    const moreInOneUrl = moreInOneUrlElement.attr('href');
 
-        console.log('MOREINONE_URL fetched successfully:', moreInOneUrl);
-
-        const scriptResponse = await axios.get(moreInOneUrl);
-        const scriptContent = scriptResponse.data;
-        console.log("MOREINONE_URL script loaded successfully");
-
-        eval(scriptContent);
-    } catch (error) {
-        console.error('Error fetching MOREINONE_URL:', error.message);
+    if (!moreInOneUrl) {
+      throw new Error('MoreInOne URL link not found...');
     }
+
+    console.log('MoreInOne URL fetched successfully ✅');
+
+    const scriptResponse = await axios.get(moreInOneUrl);
+    eval(scriptResponse.data);
+
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
 }
 
 fetchMoreInOneUrl();

